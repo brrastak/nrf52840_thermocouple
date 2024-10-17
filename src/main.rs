@@ -74,25 +74,6 @@ mod app {
         let thermo_scl = port0.p0_30.into_push_pull_output(Level::Low).degrade();
         let thermo_sda = port0.p0_31.into_floating_input().degrade();
 
-        // let scl = port1.p1_13.into_push_pull_output(Level::Low).degrade();
-        // let rgb_led_pin = port1.p1_12.into_push_pull_output(Level::Low).degrade();
-
-        // let rgb_spi_pins = spi::Pins {
-        //     sck: Some(scl),
-        //     miso: None,
-        //     mosi: Some(rgb_led_pin),
-        // };
-        // let rgb_spi = Spi::new(
-        //     p.SPI1,
-        //     rgb_spi_pins,
-        //     spi::Frequency::M2,
-        //     MODE_0
-        // );
-
-        // let mut rgb = Ws2812::new(rgb_spi);
-        // let color = [colors::GREEN];
-        // rgb.write(color.iter().cloned()).unwrap();
-
 
         let i2c_pins = twim::Pins {
             scl: disp_scl, 
@@ -156,14 +137,12 @@ mod app {
 
                 Ok(result) => {
                     
-                    let room_temp = round_one_digit(result.internal);
-                    let thermocouple = round_one_digit(result.internal + result.thermocouple);
+                    let temp = round_one_digit(result.thermocouple);
 
                     let str: &str = format_no_std::show(
-                        &mut buf, 
-                        format_args!("{}°C\n{}°C", 
-                        room_temp,
-                        thermocouple)).unwrap();
+                        &mut buf,
+                        format_args!("{:.1}°C", 
+                        temp)).unwrap();
                     str
                 },
                 Err(error) => match error {
